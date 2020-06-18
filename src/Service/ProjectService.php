@@ -135,7 +135,7 @@ class ProjectService
             $fileSystem->remove(RUNTIME_DIR . 'builds/' . $project->getId());
             $fileSystem->remove(PUBLIC_DIR . 'artifacts/pdepend/' . $project->getId());
             $fileSystem->remove(PUBLIC_DIR . 'artifacts/phpunit/' . $project->getId());
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         return $this->projectStore->delete($project);

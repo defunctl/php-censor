@@ -27,7 +27,7 @@ use PHPCensor\Store\Factory;
             }
         }
 
-        $branches = $build->getExtra('branches');
+        $branches = $build->getExtraItem('branches');
 
         switch ($build->getStatus()) {
             case Build::STATUS_PENDING:
@@ -95,7 +95,7 @@ use PHPCensor\Store\Factory;
 
                     &mdash;
                     <?= Lang::get('total_errors'); ?>:
-                    <?= (int)$build->getErrorsTotal(); ?>
+                    <?= $build->getErrorsTotal(); ?>
                     <?php if (!in_array($build->getStatus(), [Build::STATUS_PENDING, Build::STATUS_RUNNING], true)): ?>
                         <?php $trend = $build->getErrorsTrend(); ?>
                         <?php if (1 === $trend): ?>

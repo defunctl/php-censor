@@ -68,8 +68,8 @@ class GithubBuild extends GitBuild
      */
     public function getRemoteBranchLink()
     {
-        $remoteBranch    = $this->getExtra('remote_branch');
-        $remoteReference = $this->getExtra('remote_reference');
+        $remoteBranch    = $this->getExtraItem('remote_branch');
+        $remoteReference = $this->getExtraItem('remote_reference');
 
         return '//' . $this->getDomain() . '/' . $remoteReference . '/tree/' . $remoteBranch;
     }
@@ -188,7 +188,7 @@ class GithubBuild extends GitBuild
      *
      * @return string
      */
-    public function getCommitMessage()
+    public function getCommitMessage(): string
     {
         $message = parent::getCommitMessage();
         $project = $this->getProject();
@@ -216,7 +216,7 @@ class GithubBuild extends GitBuild
     {
         $reference = $this->getProject()->getReference();
         if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
-            $reference = $this->getExtra('remote_reference');
+            $reference = $this->getExtraItem('remote_reference');
         }
 
         $link = '//' . $this->getDomain() . '/' . $reference . '/';
@@ -236,7 +236,7 @@ class GithubBuild extends GitBuild
 
         try {
             if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
-                $pullRequestId = $this->getExtra('pull_request_number');
+                $pullRequestId = $this->getExtraItem('pull_request_number');
 
                 $cmd = 'cd "%s" && git checkout -b php-censor/'
                     . $this->getId()
@@ -248,7 +248,7 @@ class GithubBuild extends GitBuild
 
                 $success = $builder->executeCommand($cmd, $cloneTo, $this->getBranch(), $pullRequestId);
             }
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $success = false;
         }
 
@@ -289,7 +289,7 @@ class GithubBuild extends GitBuild
                     $helper = new Github();
 
                     $repo     = $this->getProject()->getReference();
-                    $prNumber = $this->getExtra('pull_request_number');
+                    $prNumber = $this->getExtraItem('pull_request_number');
                     $commit   = $this->getCommitId();
 
                     if (!empty($prNumber)) {
@@ -322,7 +322,7 @@ class GithubBuild extends GitBuild
         $builder->logExecOutput(false);
 
         $line     = (int)$line;
-        $prNumber = $this->getExtra('pull_request_number');
+        $prNumber = $this->getExtraItem('pull_request_number');
         $path     = $builder->buildPath;
 
         if (!empty($prNumber)) {

@@ -86,7 +86,22 @@ class BuildStatusServiceTest extends TestCase
         $build = new Build();
         $build->setId($config[$configId]['id']);
         $build->setBranch(self::BRANCH);
-        $build->setStatus($config[$configId]['status']);
+
+        switch ($config[$configId]['status']) {
+            case Build::STATUS_RUNNING:
+                $build->setStatusRunning();
+                break;
+            case Build::STATUS_SUCCESS:
+                $build->setStatusSuccess();
+                break;
+            case Build::STATUS_FAILED:
+                $build->setStatusFailed();
+                break;
+            case Build::STATUS_PENDING:
+                $build->setStatusPending();
+                break;
+        }
+
         if ($config[$configId]['finishDateTime']) {
             $build->setFinishDate(new DateTime($config[$configId]['finishDateTime']));
         }

@@ -188,7 +188,7 @@ class Application
 
             $response->setResponseCode($ex->getErrorCode());
             $response->setContent($view->render());
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->config->set('page_title', 'Error');
 
             $view = new View('exception');

@@ -135,15 +135,15 @@ class BuildTest extends TestCase
         $build = new Build();
         $build->setExtra($info);
 
-        self::assertEquals('Item One', $build->getExtra('item1'));
-        self::assertEquals(2, $build->getExtra('item2'));
-        self::assertNull($build->getExtra('item3'));
+        self::assertEquals('Item One', $build->getExtraItem('item1'));
+        self::assertEquals(2, $build->getExtraItem('item2'));
+        self::assertNull($build->getExtraItem('item3'));
         self::assertEquals($info, $build->getExtra());
 
         $build->addExtraValue('item3', 'Item Three');
 
-        self::assertEquals('Item One', $build->getExtra('item1'));
-        self::assertEquals('Item Three', $build->getExtra('item3'));
+        self::assertEquals('Item One', $build->getExtraItem('item1'));
+        self::assertEquals('Item Three', $build->getExtraItem('item3'));
     }
 
     public function testGogsBuildLinks()

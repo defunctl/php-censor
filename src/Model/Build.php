@@ -156,7 +156,7 @@ class Build extends BaseBuild
      */
     public function getRemoteBranch()
     {
-        return $this->getExtra('remote_branch');
+        return $this->getExtraItem('remote_branch');
     }
 
     /**
@@ -490,7 +490,7 @@ class Build extends BaseBuild
                 $fileSystem->remove(PUBLIC_DIR . 'artifacts/pdepend/' . $buildDirectory);
                 $fileSystem->remove(PUBLIC_DIR . 'artifacts/phpunit/' . $buildDirectory);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         }
     }
 
@@ -646,7 +646,7 @@ OUT;
     public function getTotalErrorsCount($plugin = null, $severity = null, $isNew = null)
     {
         if (null === $plugin && null === $severity && null === $isNew) {
-            return (int)$this->getErrorsTotal();
+            return $this->getErrorsTotal();
         }
 
         $key =
@@ -677,7 +677,7 @@ OUT;
      */
     public function getErrorsTrend()
     {
-        $total    = (int)$this->getErrorsTotal();
+        $total    = $this->getErrorsTotal();
         $previous = $this->getErrorsTotalPrevious();
 
         if (null === $previous) {

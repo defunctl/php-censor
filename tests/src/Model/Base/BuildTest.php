@@ -99,11 +99,13 @@ class BuildTest extends TestCase
     {
         $build = new Build();
 
-        $build->setStatusFailed();
+        $result = $build->setStatusFailed();
         self::assertEquals(Build::STATUS_FAILED, $build->getStatus());
+        self::assertEquals(true, $result);
 
-        self::expectException('\PHPCensor\Exception\InvalidArgumentException');
-        $build->setStatus(10);
+        $result = $build->setStatusFailed();
+        self::assertEquals(Build::STATUS_FAILED, $build->getStatus());
+        self::assertEquals(false, $result);
     }
 
     public function testLog()
@@ -144,9 +146,6 @@ class BuildTest extends TestCase
 
     public function testCreateDate()
     {
-        $build = new Build();
-        self::assertEquals(null, $build->getCreateDate());
-
         $build      = new Build();
         $createDate = new DateTime();
 
@@ -221,8 +220,8 @@ class BuildTest extends TestCase
         $result = $build->setExtra(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(true, $result);
         self::assertEquals(['key-1' => 'value-1', 'key-2' => 'value-2'], $build->getExtra());
-        self::assertEquals('value-1', $build->getExtra('key-1'));
-        self::assertEquals(null, $build->getExtra('key-3'));
+        self::assertEquals('value-1', $build->getExtraItem('key-1'));
+        self::assertEquals(null, $build->getExtraItem('key-3'));
 
         $result = $build->setExtra(['key-1' => 'value-1', 'key-2' => 'value-2']);
         self::assertEquals(false, $result);
@@ -265,5 +264,65 @@ class BuildTest extends TestCase
 
         $result = $build->setUserId(300);
         self::assertEquals(false, $result);
+    }
+
+    public function testErrorsTotal()
+    {
+        $build = new Build();
+
+        self::assertEquals(0, $build->getErrorsTotal());
+
+        $result = $build->setErrorsTotal(10);
+        self::assertEquals(true, $result);
+        self::assertEquals(10, $build->getErrorsTotal());
+
+        $result = $build->setErrorsTotal(10);
+        self::assertEquals(false, $result);
+        self::assertEquals(10, $build->getErrorsTotal());
+    }
+
+    public function testErrorsTotalPrevious()
+    {
+        $build = new Build();
+
+        self::assertEquals(0, $build->getErrorsTotalPrevious());
+
+        $result = $build->setErrorsTotalPrevious(20);
+        self::assertEquals(true, $result);
+        self::assertEquals(20, $build->getErrorsTotalPrevious());
+
+        $result = $build->setErrorsTotalPrevious(20);
+        self::assertEquals(false, $result);
+        self::assertEquals(20, $build->getErrorsTotalPrevious());
+    }
+
+    public function testErrorsNew()
+    {
+        $build = new Build();
+
+        self::assertEquals(0, $build->getErrorsNew());
+
+        $result = $build->setErrorsNew(30);
+        self::assertEquals(true, $result);
+        self::assertEquals(30, $build->getErrorsNew());
+
+        $result = $build->setErrorsNew(30);
+        self::assertEquals(false, $result);
+        self::assertEquals(30, $build->getErrorsNew());
+    }
+
+    public function testIsDebug()
+    {
+        $build = new Build();
+        self::assertEquals(false, $build->isDebug());
+
+        $build->setExtra(['debug' => true]);
+        self::assertEquals(true, $build->isDebug());
+
+        \define('DEBUG_MODE', true);
+        self::assertEquals(true, $build->isDebug());
+
+        $build->setExtra(['debug' => false]);
+        self::assertEquals(true, $build->isDebug());
     }
 }

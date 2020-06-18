@@ -132,7 +132,9 @@ class ExecutorTest extends TestCase
     {
         $phpUnitPluginOptions = [];
         $behatPluginOptions   = [];
-        $build                = new Build();
+
+        $build = new Build();
+        $build->setBranch('master');
 
         $config = [
            'stageOne' => [

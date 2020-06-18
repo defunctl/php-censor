@@ -38,8 +38,8 @@ class BitbucketHgBuild extends HgBuild
      */
     public function getRemoteBranchLink()
     {
-        $remoteBranch    = $this->getExtra('remote_branch');
-        $remoteReference = $this->getExtra('remote_reference');
+        $remoteBranch    = $this->getExtraItem('remote_branch');
+        $remoteReference = $this->getExtraItem('remote_reference');
 
         return 'https://bitbucket.org/' . $remoteReference . '/src/?at=' . $remoteBranch;
     }
@@ -80,7 +80,7 @@ class BitbucketHgBuild extends HgBuild
         $reference = $this->getProject()->getReference();
 
         if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
-            $reference = $this->getExtra('remote_reference');
+            $reference = $this->getExtraItem('remote_reference');
         }
 
         $link = 'https://bitbucket.org/' . $reference . '/';

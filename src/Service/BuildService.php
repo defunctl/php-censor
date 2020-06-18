@@ -55,7 +55,7 @@ class BuildService
     /**
      * @param Project     $project
      * @param int|null    $environmentId
-     * @param string      $commitId
+     * @param string|null $commitId
      * @param string|null $branch
      * @param string|null $tag
      * @param string|null $committerEmail
@@ -69,7 +69,7 @@ class BuildService
     public function createBuild(
         Project $project,
         $environmentId = null,
-        $commitId = '',
+        ?string $commitId = null,
         $branch = null,
         $tag = null,
         $committerEmail = null,
@@ -93,7 +93,7 @@ class BuildService
 
         $build->setSource($source);
         $build->setUserId($userId);
-        $build->setCommitId((string)$commitId);
+        $build->setCommitId($commitId);
 
         if (!empty($branch)) {
             $build->setBranch($branch);
@@ -186,7 +186,7 @@ class BuildService
 
             try {
                 $interval = new DateInterval($projectConfig['interval']);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $logger->error(
                     sprintf(
                         'Invalid datetime interval for project #%s! Exception: %s',
@@ -322,7 +322,7 @@ class BuildService
                     $fileSystem->remove($projectPath);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         }
     }
 
@@ -385,7 +385,7 @@ class BuildService
                     PheanstalkInterface::DEFAULT_DELAY,
                     $config->get('php-censor.queue.lifetime', 600)
                 );
-            } catch (Exception $ex) {
+            } catch (\Throwable $ex) {
                 $this->queueError = true;
             }
         }

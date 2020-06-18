@@ -139,7 +139,7 @@ class BuildServiceTest extends TestCase
             ['item1' => 1001]
         );
 
-        self::assertEquals(1001, $returnValue->getExtra('item1'));
+        self::assertEquals(1001, $returnValue->getExtraItem('item1'));
     }
 
     /**
@@ -154,6 +154,7 @@ class BuildServiceTest extends TestCase
         $build->setStatusFailed();
         $build->setLog('Test');
         $build->setBranch('example_branch');
+        $build->setCreateDate(new DateTime());
         $build->setStartDate(new DateTime());
         $build->setFinishDate(new DateTime());
         $build->setCommitMessage('test');
@@ -161,6 +162,7 @@ class BuildServiceTest extends TestCase
         $build->setExtra(['item1' => 1001]);
         $build->setSource(Build::SOURCE_MANUAL_CONSOLE);
 
+        \sleep(1);
         $returnValue = $this->testedService->createDuplicateBuild($build, Build::SOURCE_MANUAL_REBUILD_CONSOLE);
 
         self::assertNotEquals($build->getId(), $returnValue->getId());
@@ -175,7 +177,7 @@ class BuildServiceTest extends TestCase
         self::assertNull($returnValue->getFinishDate());
         self::assertEquals('test', $returnValue->getCommitMessage());
         self::assertEquals('test@example.com', $returnValue->getCommitterEmail());
-        self::assertEquals($build->getExtra('item1'), $returnValue->getExtra('item1'));
+        self::assertEquals($build->getExtraItem('item1'), $returnValue->getExtraItem('item1'));
         self::assertEquals(Build::SOURCE_MANUAL_REBUILD_CONSOLE, $returnValue->getSource());
         self::assertEquals($build->getId(), $returnValue->getParentId());
     }

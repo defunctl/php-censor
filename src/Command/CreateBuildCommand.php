@@ -101,7 +101,7 @@ class CreateBuildCommand extends Command
             );
 
             $output->writeln('Build Created');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $output->writeln('<error>Failed</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
         }

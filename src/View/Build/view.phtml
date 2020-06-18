@@ -82,7 +82,7 @@ use PHPCensor\Store\Factory;
                                 <i class="fa fa-code-fork"></i> <?= $build->getBranch(); ?>
                             </a>
                             + <?php
-                            $branches = $build->getExtra('branches');
+                            $branches = $build->getExtraItem('branches');
                             if (!empty($branches)) {
                                 foreach ($branches as $branch) {
                                     ?><i class="fa fa-code-fork"></i> <?= $branch ?><?php

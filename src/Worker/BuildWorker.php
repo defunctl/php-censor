@@ -3,7 +3,6 @@
 namespace PHPCensor\Worker;
 
 use DateTime;
-use Exception;
 use Monolog\Logger;
 use Pheanstalk\Exception\ServerException;
 use Pheanstalk\Job;
@@ -175,7 +174,7 @@ class BuildWorker
 
             try {
                 $builder->execute();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $builder->getBuildLogger()->log('');
                 $builder->getBuildLogger()->logFailure(
                     sprintf(

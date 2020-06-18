@@ -3,6 +3,8 @@
 namespace Tests\PHPCensor\Helper;
 
 use PHPCensor\Helper\BuildInterpolator;
+use PHPCensor\Model\Build;
+use PHPCensor\Model\Build\GitBuild;
 use PHPUnit\Framework\TestCase;
 
 class BuildInterpolatorTest extends TestCase
@@ -30,7 +32,10 @@ class BuildInterpolatorTest extends TestCase
 
     public function testInterpolate_LeavesStringsUnchangedWhenBuildIsSet()
     {
-        $build = $this->prophesize('PHPCensor\\Model\\Build')->reveal();
+        $build = new Build();
+        $build->setId(0);
+        $build->setProjectId(0);
+        $build->setBranch('master');
 
         $string         = "Hello World";
         $expectedOutput = "Hello World";

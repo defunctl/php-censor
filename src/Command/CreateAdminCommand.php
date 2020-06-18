@@ -90,7 +90,7 @@ class CreateAdminCommand extends Command
             $userService->createUser($adminName, $adminEmail, 'internal', ['type' => 'internal'], $adminPassword, true);
 
             $output->writeln('<info>User account created!</info>');
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $output->writeln('<error>PHP Censor failed to create your admin account!</error>');
             $output->writeln('<error>' . $ex->getMessage() . '</error>');
         }

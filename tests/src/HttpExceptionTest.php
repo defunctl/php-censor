@@ -36,6 +36,7 @@ class HttpExceptionTest extends TestCase
         }
     }
 
+
     public function testForbiddenException()
     {
         try {

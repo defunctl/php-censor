@@ -45,8 +45,8 @@ class BitbucketServerBuild extends GitBuild
      */
     public function getRemoteBranchLink()
     {
-        $remoteBranch    = $this->getExtra('remote_branch');
-        $remoteReference = $this->getExtra('remote_reference');
+        $remoteBranch    = $this->getExtraItem('remote_branch');
+        $remoteReference = $this->getExtraItem('remote_reference');
 
         return $this->getProject()->getReference() . $remoteReference . '/src/?at=' . $remoteBranch;
     }
@@ -93,7 +93,7 @@ class BitbucketServerBuild extends GitBuild
         $reference = $this->getProject()->getReference();
 
         if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
-            $reference = $this->getExtra('remote_reference');
+            $reference = $this->getExtraItem('remote_reference');
         }
 
         $link = $this->getProject()->getReference() . $reference . '/';
@@ -115,13 +115,13 @@ class BitbucketServerBuild extends GitBuild
         try {
             if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
                 $diff = $this->getPullRequestDiff($builder, $cloneTo, $extra['remote_branch']);
-                
+
                 $diffFile = $this->writeDiff($builder->buildPath, $diff);
 
                 $cmd = 'cd "%s" && git checkout -b php-censor/' . $this->getId();
 
                 $success = $builder->executeCommand($cmd, $cloneTo);
-                
+
                 if ($success) {
                     $applyCmd = 'git apply "%s"';
                     $success  = $builder->executeCommand($applyCmd, $diffFile);
@@ -130,7 +130,7 @@ class BitbucketServerBuild extends GitBuild
                 //unlink($diffFile);
                 $skipGitFinalization = true;
             }
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $success = false;
         }
 
@@ -140,7 +140,7 @@ class BitbucketServerBuild extends GitBuild
 
         return $success;
     }
-    
+
     /**
      * Create request patch with diff
      *

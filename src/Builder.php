@@ -242,7 +242,7 @@ class Builder implements LoggerAwareInterface
             } else {
                 $this->build->setStatusFailed();
             }
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $success = false;
             $this->build->setStatusFailed();
             $this->buildLogger->logFailure('Exception: ' . $ex->getMessage(), $ex);
@@ -266,7 +266,7 @@ class Builder implements LoggerAwareInterface
                     $this->pluginExecutor->executePlugins($this->config, Build::STAGE_BROKEN);
                 }
             }
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->buildLogger->logFailure('Exception: ' . $ex->getMessage(), $ex);
         }
 
@@ -284,7 +284,7 @@ class Builder implements LoggerAwareInterface
             // Complete stage plugins are always run
             $this->currentStage = Build::STAGE_COMPLETE;
             $this->pluginExecutor->executePlugins($this->config, Build::STAGE_COMPLETE);
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->buildLogger->logFailure('Exception: ' . $ex->getMessage());
         }
 
@@ -307,11 +307,7 @@ class Builder implements LoggerAwareInterface
         $this->store->save($this->build);
     }
 
-    /**
-     * @throws Exception\HttpException
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function setErrorTrend()
+    protected function setErrorTrend(): void
     {
         $this->build->setErrorsTotal($this->store->getErrorsCount($this->build->getId()));
 
@@ -321,17 +317,19 @@ class Builder implements LoggerAwareInterface
             $this->build->getBranch()
         );
 
-        if (isset($trend[1])) {
+        $errorsTotalPrevious = 0;
+        if (!empty($trend[1])) {
             $previousBuild = $this->store->getById($trend[1]['build_id']);
-            if ($previousBuild &&
-                !in_array(
-                    $previousBuild->getStatus(),
-                    [Build::STATUS_PENDING, Build::STATUS_RUNNING],
-                    true
-                )) {
-                $this->build->setErrorsTotalPrevious((int)$trend[1]['count']);
+            if (
+                $previousBuild &&
+                !in_array($previousBuild->getStatus(), [Build::STATUS_PENDING, Build::STATUS_RUNNING], true)
+            ) {
+                $errorsTotalPrevious = (int)$trend[1]['count'];
             }
         }
+
+        $this->build->setErrorsTotalPrevious($errorsTotalPrevious);
+        $this->build->setErrorsNew($this->store->getNewErrorsCount($this->build->getId()));
     }
 
     /**
@@ -511,9 +509,9 @@ class Builder implements LoggerAwareInterface
      * Add a failure-coloured message to the log.
      *
      * @param string     $message
-     * @param Exception $exception The exception that caused the error.
+     * @param \Throwable $exception The exception that caused the error.
      */
-    public function logFailure($message, Exception $exception = null)
+    public function logFailure($message, \Throwable $exception = null)
     {
         $this->buildLogger->logFailure($message, $exception);
     }

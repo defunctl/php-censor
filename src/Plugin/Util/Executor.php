@@ -229,7 +229,7 @@ class Executor
             $obj = $this->pluginFactory->buildPlugin($class, (is_null($options) ? [] : $options));
 
             return $obj->execute();
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $this->logger->logFailure('Exception: ' . $ex->getMessage(), $ex);
 
             return false;

@@ -64,7 +64,7 @@ class GitBuild extends Build
      */
     protected function mergeBranches(Builder $builder, $buildPath)
     {
-        $branches = $this->getExtra('branches');
+        $branches = $this->getExtraItem('branches');
         if (!empty($branches)) {
             $cmd = 'cd "%s" && git merge --quiet origin/%s';
             foreach ($branches as $branch) {
@@ -171,7 +171,11 @@ class GitBuild extends Build
         if ($builder->executeCommand($chdir . ' && git rev-parse HEAD', $cloneTo)) {
             $commitId = trim($builder->getLastOutput());
 
-            $this->setCommitId($commitId);
+            $this->setCommitId(
+                !empty($commitId)
+                    ? $commitId
+                    : null
+            );
 
             if ($builder->executeCommand($chdir . ' && git log -1 --pretty=format:%%s %s', $cloneTo, $commitId)) {
                 $this->setCommitMessage(trim($builder->getLastOutput()));

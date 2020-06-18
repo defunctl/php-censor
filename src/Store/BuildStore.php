@@ -553,13 +553,9 @@ class BuildStore extends Store
     }
 
     /**
-     * @param int $buildId
-     *
-     * @return int
-     *
      * @throws Exception
      */
-    public function getNewErrorsCount($buildId)
+    public function getNewErrorsCount(int $buildId): int
     {
         $query = 'SELECT COUNT(*) AS {{total}} FROM {{build_errors}} WHERE {{build_id}} = :build_id AND {{is_new}} = true';
 
@@ -577,13 +573,9 @@ class BuildStore extends Store
     }
 
     /**
-     * @param int $buildId
-     *
-     * @return int
-     *
      * @throws Exception
      */
-    public function getErrorsCount($buildId)
+    public function getErrorsCount(int $buildId): int
     {
         $query = 'SELECT COUNT(*) AS {{total}} FROM {{build_errors}} WHERE {{build_id}} = :build_id';
 

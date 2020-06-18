@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace PHPCensor\Model\Base;
 
-use DateTime;
-use Exception;
 use PHPCensor\Exception\InvalidArgumentException;
 use PHPCensor\Model;
-use PHPCensor\Store\BuildStore;
-use PHPCensor\Store\Factory;
 
 class Build extends Model
 {
@@ -51,19 +47,9 @@ class Build extends Model
         'environment_id'        => null,
         'source'                => Build::SOURCE_UNKNOWN,
         'user_id'               => null,
-        'errors_total'          => null,
-        'errors_total_previous' => null,
-        'errors_new'            => null,
-    ];
-
-    /**
-     * @var array
-     */
-    protected $allowedStatuses = [
-        self::STATUS_PENDING,
-        self::STATUS_RUNNING,
-        self::STATUS_SUCCESS,
-        self::STATUS_FAILED,
+        'errors_total'          => 0,
+        'errors_total_previous' => 0,
+        'errors_new'            => 0,
     ];
 
     /**
@@ -83,44 +69,28 @@ class Build extends Model
         self::SOURCE_WEBHOOK_PULL_REQUEST_MERGED,
     ];
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
-        return (int)$this->data['id'];
+        return $this->data['id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setId(int $value)
+    public function setId(int $value): bool
     {
         if ($this->data['id'] === $value) {
             return false;
         }
 
-        $this->data['id'] = (int)$value;
+        $this->data['id'] = $value;
 
         return $this->setModified('id');
     }
 
-    /**
-     * @return int
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->data['parent_id'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setParentId(?int $value)
+    public function setParentId(?int $value): bool
     {
         if ($this->data['parent_id'] === $value) {
             return false;
@@ -131,20 +101,12 @@ class Build extends Model
         return $this->setModified('parent_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getProjectId()
+    public function getProjectId(): int
     {
         return (int)$this->data['project_id'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setProjectId(int $value)
+    public function setProjectId(int $value): bool
     {
         if ($this->data['project_id'] === $value) {
             return false;
@@ -155,20 +117,12 @@ class Build extends Model
         return $this->setModified('project_id');
     }
 
-    /**
-     * @return string
-     */
-    public function getCommitId()
+    public function getCommitId(): ?string
     {
         return $this->data['commit_id'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setCommitId(string $value)
+    public function setCommitId(?string $value): bool
     {
         if ($this->data['commit_id'] === $value) {
             return false;
@@ -179,29 +133,13 @@ class Build extends Model
         return $this->setModified('commit_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getStatus()
+    public function getStatus(): int
     {
         return (int)$this->data['status'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setStatus(int $value)
+    protected function setStatus(int $value): bool
     {
-        if (!in_array($value, $this->allowedStatuses, true)) {
-            throw new InvalidArgumentException(
-                'Column "status" must be one of: ' . join(', ', $this->allowedStatuses) . '.'
-            );
-        }
-
         if ($this->data['status'] === $value) {
             return false;
         }
@@ -211,56 +149,32 @@ class Build extends Model
         return $this->setModified('status');
     }
 
-    public function setStatusPending()
+    public function setStatusPending(): bool
     {
-        if (self::STATUS_PENDING !== $this->data['status']) {
-            $this->setModified('status');
-        }
-
-        $this->data['status'] = self::STATUS_PENDING;
+        return $this->setStatus(self::STATUS_PENDING);
     }
 
-    public function setStatusRunning()
+    public function setStatusRunning(): bool
     {
-        if (self::STATUS_RUNNING !== $this->data['status']) {
-            $this->setModified('status');
-        }
-
-        $this->data['status'] = self::STATUS_RUNNING;
+        return $this->setStatus(self::STATUS_RUNNING);
     }
 
-    public function setStatusSuccess()
+    public function setStatusSuccess(): bool
     {
-        if (self::STATUS_SUCCESS !== $this->data['status']) {
-            $this->setModified('status');
-        }
-
-        $this->data['status'] = self::STATUS_SUCCESS;
+        return $this->setStatus(self::STATUS_SUCCESS);
     }
 
-    public function setStatusFailed()
+    public function setStatusFailed(): bool
     {
-        if (self::STATUS_FAILED !== $this->data['status']) {
-            $this->setModified('status');
-        }
-
-        $this->data['status'] = self::STATUS_FAILED;
+        return $this->setStatus(self::STATUS_FAILED);
     }
 
-    /**
-     * @return string
-     */
-    public function getLog()
+    public function getLog(): ?string
     {
         return $this->data['log'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setLog(?string $value)
+    public function setLog(?string $value): bool
     {
         if ($this->data['log'] === $value) {
             return false;
@@ -271,20 +185,12 @@ class Build extends Model
         return $this->setModified('log');
     }
 
-    /**
-     * @return string
-     */
-    public function getBranch()
+    public function getBranch(): string
     {
         return $this->data['branch'];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function setBranch(string $value)
+    public function setBranch(string $value): bool
     {
         if ($this->data['branch'] === $value) {
             return false;
@@ -295,20 +201,12 @@ class Build extends Model
         return $this->setModified('branch');
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): ?string
     {
         return $this->data['tag'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setTag(?string $value)
+    public function setTag(?string $value): bool
     {
         if ($this->data['tag'] === $value) {
             return false;
@@ -319,26 +217,12 @@ class Build extends Model
         return $this->setModified('tag');
     }
 
-    /**
-     * @return DateTime|null
-     *
-     * @throws Exception
-     */
-    public function getCreateDate()
+    public function getCreateDate(): \DateTime
     {
-        if ($this->data['create_date']) {
-            return new DateTime($this->data['create_date']);
-        }
-
-        return null;
+        return new \DateTime($this->data['create_date']);
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setCreateDate(DateTime $value)
+    public function setCreateDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -351,26 +235,16 @@ class Build extends Model
         return $this->setModified('create_date');
     }
 
-    /**
-     * @return DateTime|null
-     *
-     * @throws Exception
-     */
-    public function getStartDate()
+    public function getStartDate(): ?\DateTime
     {
         if ($this->data['start_date']) {
-            return new DateTime($this->data['start_date']);
+            return new \DateTime($this->data['start_date']);
         }
 
         return null;
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setStartDate(DateTime $value)
+    public function setStartDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -384,25 +258,18 @@ class Build extends Model
     }
 
     /**
-     * @return DateTime|null
-     *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function getFinishDate()
+    public function getFinishDate(): ?\DateTime
     {
         if ($this->data['finish_date']) {
-            return new DateTime($this->data['finish_date']);
+            return new \DateTime($this->data['finish_date']);
         }
 
         return null;
     }
 
-    /**
-     * @param DateTime $value
-     *
-     * @return bool
-     */
-    public function setFinishDate(DateTime $value)
+    public function setFinishDate(\DateTime $value): bool
     {
         $stringValue = $value->format('Y-m-d H:i:s');
 
@@ -415,20 +282,12 @@ class Build extends Model
         return $this->setModified('finish_date');
     }
 
-    /**
-     * @return string
-     */
-    public function getCommitterEmail()
+    public function getCommitterEmail(): ?string
     {
         return $this->data['committer_email'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setCommitterEmail(?string $value)
+    public function setCommitterEmail(?string $value): bool
     {
         if ($this->data['committer_email'] === $value) {
             return false;
@@ -439,20 +298,12 @@ class Build extends Model
         return $this->setModified('committer_email');
     }
 
-    /**
-     * @return string
-     */
-    public function getCommitMessage()
+    public function getCommitMessage(): ?string
     {
         return $this->data['commit_message'];
     }
 
-    /**
-     * @param string|null $value
-     *
-     * @return bool
-     */
-    public function setCommitMessage(?string $value)
+    public function setCommitMessage(?string $value): bool
     {
         if ($this->data['commit_message'] === $value) {
             return false;
@@ -464,32 +315,28 @@ class Build extends Model
     }
 
     /**
-     * @param string|null $key
-     *
-     * @return array|string|null
+     * @return mixed|null
      */
-    public function getExtra($key = null)
+    public function getExtraItem(string $key)
     {
-        $data  = json_decode($this->data['extra'], true);
-        $extra = null;
-        if (is_null($key)) {
-            $extra = $data;
-        } elseif (isset($data[$key])) {
-            $extra = $data[$key];
+        $extra = $this->getExtra();
+        if (!empty($extra[$key])) {
+            return $extra[$key];
         }
 
-        return $extra;
+        return null;
     }
 
-    /**
-     * @param array $value
-     *
-     * @return bool
-     *
-     */
-    public function setExtra(array $value)
+    public function getExtra(): array
     {
-        $extra = json_encode($value);
+        return !empty($this->data['extra'])
+            ? \json_decode($this->data['extra'], true)
+            : [];
+    }
+
+    public function setExtra(array $value): bool
+    {
+        $extra = \json_encode($value);
         if ($this->data['extra'] === $extra) {
             return false;
         }
@@ -499,22 +346,12 @@ class Build extends Model
         return $this->setModified('extra');
     }
 
-    /**
-     * @return int|null
-     */
-    public function getEnvironmentId()
+    public function getEnvironmentId(): ?int
     {
         return $this->data['environment_id'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setEnvironmentId(?int $value)
+    public function setEnvironmentId(?int $value): bool
     {
         if ($this->data['environment_id'] === $value) {
             return false;
@@ -525,26 +362,19 @@ class Build extends Model
         return $this->setModified('environment_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getSource()
+    public function getSource(): int
     {
-        return (int)$this->data['source'];
+        return $this->data['source'];
     }
 
     /**
-     * @param int|null $value
-     *
-     * @return bool
-     *
      * @throws InvalidArgumentException
      */
-    public function setSource(?int $value)
+    public function setSource(int $value): bool
     {
         if (!in_array($value, $this->allowedSources, true)) {
             throw new InvalidArgumentException(
-                'Column "source" must be one of: ' . join(', ', $this->allowedSources) . '.'
+                'Column "source" must be one of: ' . \implode(', ', $this->allowedSources) . '.'
             );
         }
 
@@ -557,20 +387,12 @@ class Build extends Model
         return $this->setModified('source');
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserId()
+    public function getUserId(): ?int
     {
         return $this->data['user_id'];
     }
 
-    /**
-     * @param int|null $value
-     *
-     * @return bool
-     */
-    public function setUserId(?int $value)
+    public function setUserId(?int $value): bool
     {
         if ($this->data['user_id'] === $value) {
             return false;
@@ -581,31 +403,12 @@ class Build extends Model
         return $this->setModified('user_id');
     }
 
-    /**
-     * @return int
-     *
-     * @throws InvalidArgumentException
-     */
-    public function getErrorsTotal()
+    public function getErrorsTotal(): int
     {
-        if (null === $this->data['errors_total'] &&
-            !in_array($this->getStatus(), [self::STATUS_PENDING, self::STATUS_RUNNING], true)) {
-            /** @var BuildStore $store */
-            $store = Factory::getStore('Build');
-
-            $this->setErrorsTotal($store->getErrorsCount($this->getId()));
-            $store->save($this);
-        }
-
         return $this->data['errors_total'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setErrorsTotal(int $value)
+    public function setErrorsTotal(int $value): bool
     {
         if ($this->data['errors_total'] === $value) {
             return false;
@@ -616,42 +419,12 @@ class Build extends Model
         return $this->setModified('errors_total');
     }
 
-    /**
-     * @return int|null
-     *
-     * @throws Exception
-     */
-    public function getErrorsTotalPrevious()
+    public function getErrorsTotalPrevious(): int
     {
-        if (null === $this->data['errors_total_previous']) {
-            /** @var BuildStore $store */
-            $store = Factory::getStore('Build');
-
-            $trend = $store->getBuildErrorsTrend($this->getId(), $this->getProjectId(), $this->getBranch());
-
-            if (isset($trend[1])) {
-                $previousBuild = $store->getById($trend[1]['build_id']);
-                if ($previousBuild &&
-                    !in_array(
-                        $previousBuild->getStatus(),
-                        [self::STATUS_PENDING, self::STATUS_RUNNING],
-                        true
-                    )) {
-                    $this->setErrorsTotalPrevious((int)$trend[1]['count']);
-                    $store->save($this);
-                }
-            }
-        }
-
         return $this->data['errors_total_previous'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setErrorsTotalPrevious(int $value)
+    public function setErrorsTotalPrevious(int $value): bool
     {
         if ($this->data['errors_total_previous'] === $value) {
             return false;
@@ -662,33 +435,12 @@ class Build extends Model
         return $this->setModified('errors_total_previous');
     }
 
-    /**
-     * @return int
-     *
-     * @throws InvalidArgumentException
-     */
-    public function getErrorsNew()
+    public function getErrorsNew(): int
     {
-        if (null === $this->data['errors_new']) {
-            /** @var BuildStore $errorStore */
-            $store = Factory::getStore('Build');
-
-            $this->setErrorsNew(
-                (int)$store->getNewErrorsCount($this->getId())
-            );
-
-            $store->save($this);
-        }
-
         return $this->data['errors_new'];
     }
 
-    /**
-     * @param int $value
-     *
-     * @return bool
-     */
-    public function setErrorsNew(int $value)
+    public function setErrorsNew(int $value): bool
     {
         if ($this->data['errors_new'] === $value) {
             return false;
@@ -699,16 +451,13 @@ class Build extends Model
         return $this->setModified('errors_new');
     }
 
-    /**
-     * @return bool
-     */
-    public function isDebug()
+    public function isDebug(): bool
     {
         if (defined('DEBUG_MODE') && DEBUG_MODE) {
             return true;
         }
 
-        if ($this->getExtra('debug')) {
+        if ($this->getExtraItem('debug')) {
             return true;
         }
 

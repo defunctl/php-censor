@@ -166,7 +166,7 @@ class Phar extends Plugin
             }
 
             $success = true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->builder->logFailure('Phar Plugin Internal Error. Exception: ' . $e->getMessage());
         }
 

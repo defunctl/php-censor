@@ -545,7 +545,7 @@ class InstallCommand extends Command
             unset($pdo);
 
             return true;
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $output->writeln(
                 '<error>PHP Censor could not connect to database with the details provided. ' .
                 'Please try again.</error>'
@@ -618,7 +618,7 @@ class InstallCommand extends Command
             );
 
             $output->writeln('<info>User account created!</info>');
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $output->writeln('<error>PHP Censor failed to create your admin account!</error>');
             $output->writeln('<error>' . $ex->getMessage() . '</error>');
         }
@@ -645,7 +645,7 @@ class InstallCommand extends Command
             Factory::getStore('ProjectGroup')->save($group);
 
             $output->writeln('<info>Default project group created!</info>');
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $output->writeln('<error>PHP Censor failed to create default project group!</error>');
             $output->writeln('<error>' . $ex->getMessage() . '</error>');
         }

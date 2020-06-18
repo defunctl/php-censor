@@ -55,8 +55,8 @@ class BitbucketBuild extends GitBuild
      */
     public function getRemoteBranchLink()
     {
-        $remoteBranch    = $this->getExtra('remote_branch');
-        $remoteReference = $this->getExtra('remote_reference');
+        $remoteBranch    = $this->getExtraItem('remote_branch');
+        $remoteReference = $this->getExtraItem('remote_reference');
 
         return 'https://bitbucket.org/' . $remoteReference . '/src/?at=' . $remoteBranch;
     }
@@ -128,7 +128,7 @@ class BitbucketBuild extends GitBuild
         $url = sprintf(
             '/2.0/repositories/%s/commit/%s/statuses/build',
             (in_array($this->getSource(), Build::$pullRequestSources, true)
-                ? $this->getExtra('remote_reference')
+                ? $this->getExtraItem('remote_reference')
                 : $project->getReference()),
             $this->getCommitId()
         );
@@ -182,7 +182,7 @@ class BitbucketBuild extends GitBuild
         $reference = $this->getProject()->getReference();
 
         if (in_array($this->getSource(), Build::$pullRequestSources, true)) {
-            $reference = $this->getExtra('remote_reference');
+            $reference = $this->getExtraItem('remote_reference');
         }
 
         $link = 'https://bitbucket.org/' . $reference . '/';
@@ -206,7 +206,7 @@ class BitbucketBuild extends GitBuild
                 $helper = new Bitbucket();
                 $diff = $helper->getPullRequestDiff(
                     $this->getProject()->getReference(),
-                    $this->getExtra('pull_request_number')
+                    $this->getExtraItem('pull_request_number')
                 );
 
                 $diffFile = $this->writeDiff($builder->buildPath, $diff);
@@ -218,7 +218,7 @@ class BitbucketBuild extends GitBuild
                 unlink($diffFile);
                 $skipGitFinalization = true;
             }
-        } catch (Exception $ex) {
+        } catch (\Throwable $ex) {
             $success = false;
         }
 
@@ -278,7 +278,7 @@ class BitbucketBuild extends GitBuild
                     $helper = new Bitbucket();
 
                     $repo     = $this->getProject()->getReference();
-                    $prNumber = $this->getExtra('pull_request_number');
+                    $prNumber = $this->getExtraItem('pull_request_number');
                     $commit   = $this->getCommitId();
 
                     if (!empty($prNumber)) {
@@ -296,7 +296,7 @@ class BitbucketBuild extends GitBuild
 
         parent::reportError($builder, $plugin, $message, $severity, $file, $lineStart, $lineEnd);
     }
-    
+
     /**
      * Uses git diff to figure out what the diff line position is, based on the error line number.
      *
@@ -311,7 +311,7 @@ class BitbucketBuild extends GitBuild
         $builder->logExecOutput(false);
 
         $line     = (int)$line;
-        $prNumber = $this->getExtra('pull_request_number');
+        $prNumber = $this->getExtraItem('pull_request_number');
         $path     = $builder->buildPath;
 
         if (!empty($prNumber)) {
